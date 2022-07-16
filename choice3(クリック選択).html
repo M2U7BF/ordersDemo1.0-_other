@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>購入食材の選択 | 株式会社ニーズ＆フーズ</title>
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <title>購入食材の選択 | 株式会社ニーズ＆フーズ</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <h1>購入食材の選択</h1>
     <div>
@@ -69,79 +71,104 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript">
-    var grandTotal;
-    var selectedItems = [];
+        var grandTotal;
+        var selectedItems = [];
 
 
-    // <!--
-    $(function() {
-        var id;
-        var name;
-        var price;
+        // <!--
+        $(function () {
+            var id;
+            var name;
+            var price;
 
-        $(".foodListItem").click(function(){
-        id =  $(this).data('id');
-        
-        if(!($('#selectedItem'+id).length)){
-        // TODO Controllerなどの処理にする(DBから取得など)
-        switch(id){
-            case 0:
-                name = "芽キャベツ";
-                price = 700;
-                break;
-            case 1:
-                name = "切みつば";
-                price = 2000;
-                break;
-            case 2:
-                name = "あさつき";
-                price = 700;
-                break;
-            case 3:
-                name = "せり";
-                price = 800;
-                break;
-            case 4:
-                name = "菜の花";
-                price = 650;
-                break;
+            $(".foodListItem").click(function () {
+                id = $(this).data('id');
+
+                if (!($('#selectedItem' + id).length)) {
+                    // TODO Controllerなどの処理にする(DBから取得など)
+                    switch (id) {
+                        case 0:
+                            name = "芽キャベツ";
+                            price = 700;
+                            break;
+                        case 1:
+                            name = "切みつば";
+                            price = 2000;
+                            break;
+                        case 2:
+                            name = "あさつき";
+                            price = 700;
+                            break;
+                        case 3:
+                            name = "せり";
+                            price = 800;
+                            break;
+                        case 4:
+                            name = "菜の花";
+                            price = 650;
+                            break;
+                    }
+                    $("#foodList").append("\<tr class=\"selectedItem\" id=\"selectedItem" + id + "\"\>" +
+                        "\<td\>" + name + "\<\/td\>" +
+                        "\<td\>1kgあたり\<\/td\>" +
+                        "\<td\>" + price + "\<\/td\>" +
+                        "\<td\>"+
+                            "\<select id=\"numPurchases" + id + "\" onchange=\"calc(" + price + "," + id + ")\" placeholder='個数'\>"+
+                                "\<option\>0\<\/option\>"+
+                                "\<option\>1\<\/option\>"+
+                                "\<option\>2\<\/option\>"+
+                                "\<option\>3\<\/option\>"+
+                                "\<option\>4\<\/option\>"+
+                                "\<option\>5\<\/option\>"+
+                                "\<option\>6\<\/option\>"+
+                                "\<option\>7\<\/option\>"+
+                                "\<option\>8\<\/option\>"+
+                                "\<option\>9\<\/option\>"+
+                                "\<option\>10\<\/option\>"+
+                                "\<option\>11\<\/option\>"+
+                                "\<option\>12\<\/option\>"+
+                                "\<option\>13\<\/option\>"+
+                                "\<option\>14\<\/option\>"+
+                                "\<option\>15\<\/option\>"+
+                            "\<\/select\>"+
+                        "\<\/td\>" +
+                        "\<td id=\"total" + id + "\" class=\"total\" \>0\<\/td\>" +
+                        "\<td\>\<button onclick=\"removeItem(this," + id + ")\" class=\"deleteButton\"\>削除する\<\/button\>\<\/td\>" +
+                        "\<\/tr\>");
+                }
+            });
+        });
+
+        function removeItem(button, id) {
+            let parent = button.parentNode.parentNode;
+            parent.remove();
+
+            var grandTotal = 0;
+            $(".total").each(function (i, element) {
+                var text = Number($(element).text());
+                grandTotal += text;
+            });
+            grandTotal = Math.round(grandTotal * 1.08);
+            $("#grandTotal").text(grandTotal);
         }
-        $("#foodList").append("\<tr class=\"selectedItem\" id=\"selectedItem"+id+"\"\>\<td\>"+
-            name+"\<\/td\>\<td\>1kgあたり\<\/td\>\<td\>"+
-            price+"\<\/td\>\<td\>\<input type=\"text\" id=\"numPurchases"+id+"\" onkeyup=\"calc("+price+","+id+")\" placeholder='個数'\>\<\/td\>\<td id=\"total"+id+"\" class=\"total\" \>0\<\/td\>\<td\>\<button onclick=\"removeItem(this,"+id+")\" class=\"deleteButton\"\>削除する\<\/button\>\<\/td\>\<\/tr\>");
-            }
-    });
-    });
 
-    function removeItem(button,id) {
-        let parent = button.parentNode.parentNode;
-        parent.remove();
+        function calc(price, id) {
+            let amount = $("#numPurchases" + id).val();
+            let total = Math.ceil(price * amount);
 
-        var grandTotal = 0;
-        $(".total").each(function(i,element){
-            var text = Number($(element).text());
-            grandTotal += text;
-         });
-         grandTotal =  Math.round(grandTotal*1.08);
-        $("#grandTotal").text(grandTotal);
-    }
+            $("#total" + id).text(total);
 
-    function calc(price,id) {
-        let amount = $("#numPurchases"+id).val();
-        let total = Math.ceil(price * amount);
- 
-        $("#total"+id).text(total);
-
-        var grandTotal = 0;
-        $(".total").each(function(i,element){
-            var text = Number($(element).text());
-            grandTotal += text;
-         });
-         grandTotal =  Math.round(grandTotal*1.08);
-        $("#grandTotal").text(grandTotal);
-    }
+            var grandTotal = 0;
+            $(".total").each(function (i, element) {
+                var text = Number($(element).text());
+                grandTotal += text;
+            });
+            grandTotal = Math.round(grandTotal * 1.08);
+            $("#grandTotal").text(grandTotal);
+        }
     //-->
-    
+
     </script>
 </body>
+
 </html>
